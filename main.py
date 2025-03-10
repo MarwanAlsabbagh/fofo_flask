@@ -1,14 +1,50 @@
 from flask import Flask, jsonify, request, Response
 import os
 import requests as req
+from datasets import load_dataset, concatenate_datasets, load_from_disk
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering
+import torch
+from pyngrok import ngrok
+
+model = AutoModelForQuestionAnswering.from_pretrained("./fine-tuned-xlm-roberta-law-model")
+tokenizer = AutoTokenizer.from_pretrained("./fine-tuned-xlm-roberta-law-model")
 
 app = Flask(__name__)
 
 @app.route('/chatbot1')
 def chatbot1():
-    question = request.args["question"]
-    answer="ok"
-    return jsonify({'question': question, 'answer': answer})
+    data = request.json
+    question = data["question"]
+    context = data["context"]
+
+    # Tokenize the input (question + context)
+    inputs = tokenizer(
+        question,
+        context,
+        max_length=512,
+        truncation=True,
+        padding="max_length",
+        return_tensors="pt",
+    )
+
+    # Get model predictions
+    with torch.no_grad():
+        outputs = model(**inputs)
+        start_logits = outputs.start_logits
+        end_logits = outputs.end_logits
+
+    # Find the start and end positions of the answer
+    start_index = torch.argmax(start_logits)
+    end_index = torch.argmax(end_logits)
+
+    # Ensure the end index is greater than or equal to the start index
+    if end_index < start_index:
+        end_index = start_index
+
+    # Decode the answer
+    answer = tokenizer.decode(inputs["input_ids"][0][start_index:end_index + 1], skip_special_tokens=True)
+
+    return jsonify({"reply": answer})
 
 @app.route('/chatbot2')
 def chatbot2():
