@@ -1,10 +1,8 @@
 from flask import Flask, jsonify, request, Response
 import os
 import requests as req
-from datasets import load_dataset, concatenate_datasets, load_from_disk
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import torch
-from pyngrok import ngrok
 
 model = AutoModelForQuestionAnswering.from_pretrained("./fine-tuned-xlm-roberta-law-model")
 tokenizer = AutoTokenizer.from_pretrained("./fine-tuned-xlm-roberta-law-model")
