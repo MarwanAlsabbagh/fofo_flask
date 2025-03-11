@@ -14,8 +14,9 @@ logging.set_verbosity_error()
 
 pipe = pipeline(
     "question-answering",
-    model="lataon/fine-tuned-xlm-roberta-law-model",
-    tokenizer="lataon/fine-tuned-xlm-roberta-law-model"
+    model="deepset/xlm-roberta-large-squad2",
+    tokenizer="deepset/xlm-roberta-large-squad2",
+    use_auth_token="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"
 )
 
 app = Flask(__name__)
