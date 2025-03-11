@@ -5,9 +5,8 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import torch
 # Correct local path format
 
-model = AutoModelForQuestionAnswering.from_pretrained("/app/fine-tuned-xlm-roberta-law-model")
-# For models on HuggingFace Hu
-tokenizer = AutoTokenizer.from_pretrained("/app/fine-tuned-xlm-roberta-law-model")
+tokenizer = AutoTokenizer.from_pretrained("lataon/xlm-roberta-base-finetuned-legal-domain")
+model = AutoModelForQuestionAnswering.from_pretrained("lataon/xlm-roberta-base-finetuned-legal-domain")
 
 app = Flask(__name__)
 
