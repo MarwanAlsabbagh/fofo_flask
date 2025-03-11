@@ -42,7 +42,7 @@ def chatbot1():
         return jsonify({"reply": output})
     except Exception as e:
         print(e)
-        return jsonify({"reply": "error})
+        return jsonify({"reply": "error"})
 
 @app.route('/chatbot2')
 def chatbot2():
