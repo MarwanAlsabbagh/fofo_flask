@@ -3,6 +3,7 @@ import os
 import requests as req
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import torch
+import warnings
 # Correct local path format
 
 tokenizer = AutoTokenizer.from_pretrained("lataon/xlm-roberta-base-finetuned-legal-domain")
