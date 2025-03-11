@@ -41,7 +41,11 @@ def chatbot1():
         	"context": "My name is Clara and I live in Berkeley."
         },
         })
-    return jsonify({"reply": result['answer']})
+        print(output)
+        return jsonify({"reply": output})
+    except(exception e):
+        print(e)
+        return jsonify({"reply": "error})
 
 @app.route('/chatbot2')
 def chatbot2():
