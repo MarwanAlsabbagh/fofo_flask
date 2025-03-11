@@ -18,7 +18,7 @@ pipe = pipeline(
     tokenizer="deepset/xlm-roberta-large-squad2",
     use_auth_token="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",
     device_map="auto",
-    max_memory={0: "5GB"}
+    max_memory={0: "0.4GB"}
 )
 
 app = Flask(__name__)
