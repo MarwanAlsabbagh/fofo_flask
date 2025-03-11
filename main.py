@@ -28,29 +28,31 @@ app = Flask(__name__)
 
 @app.route('/chatbot1')
 def chatbot1():
-    data = request.json
-    question = data["question"]
-    # context = data["context"]
-
-    # 2. Define input properly
-    arabic_context = """
-    المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، 
-    الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار.
-    """
+    try:
+        data = request.json
+        question = data["question"]
+        # context = data["context"]
     
-    # arabic_question = "ماذا تنص المادة 12 من الدستور المصري عن التعليم؟"
-    
-    # 3. Get answer
-    result = pipe(
-        question=arabic_question,
-        context=question,
-        max_answer_len=100,
-        handle_impossible_answer=False
-    )
-    
-    print(f"الإجابة: {result['answer']}")
-    print(f"الثقة: {result['score']:.2f}")
-
+        # 2. Define input properly
+        arabic_context = """
+        المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، 
+        الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار.
+        """
+        
+        # arabic_question = "ماذا تنص المادة 12 من الدستور المصري عن التعليم؟"
+        
+        # 3. Get answer
+        result = pipe(
+            question=arabic_question,
+            context=question,
+            max_answer_len=100,
+            handle_impossible_answer=False
+        )
+        
+        print(f"الإجابة: {result['answer']}")
+        print(f"الثقة: {result['score']:.2f}")
+    except Exception as e:
+        return jsonify({"Exception": e})
     return jsonify({"reply": result['answer']})
 
 @app.route('/chatbot2')
