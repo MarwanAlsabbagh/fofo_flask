@@ -16,7 +16,9 @@ pipe = pipeline(
     "question-answering",
     model="deepset/xlm-roberta-large-squad2",
     tokenizer="deepset/xlm-roberta-large-squad2",
-    use_auth_token="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"
+    use_auth_token="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",
+    device_map="auto",
+    max_memory={0: "5GB"}
 )
 
 app = Flask(__name__)
