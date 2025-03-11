@@ -30,29 +30,20 @@ app = Flask(__name__)
 def chatbot1():
     data = request.json
     question = data["question"]
-    context = data["context"]
+    # context = data["context"]
 
-    # Tokenize the input (question + context)
-    inputs = tokenizer(
-        question,
-        context,
-        max_length=512,
-        truncation=True,
-        padding="max_length",
-        return_tensors="pt",
-    )
-
-   arabic_context = """
+    # 2. Define input properly
+    arabic_context = """
     المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، 
     الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار.
     """
     
-    arabic_question = "ماذا تنص المادة 12 من الدستور المصري عن التعليم؟"
+    # arabic_question = "ماذا تنص المادة 12 من الدستور المصري عن التعليم؟"
     
     # 3. Get answer
     result = pipe(
         question=arabic_question,
-        context=arabic_context,
+        context=question,
         max_answer_len=100,
         handle_impossible_answer=False
     )
