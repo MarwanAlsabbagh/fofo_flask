@@ -49,7 +49,8 @@ def chatbot1():
         print(f"الإجابة: {result['answer']}")
         print(f"الثقة: {result['score']:.2f}")
     except Exception as e:
-        return jsonify({"Exception": e})
+        print(e)
+        return jsonify({"Exception": "asd"})
     return jsonify({"reply": result['answer']})
 
 @app.route('/chatbot2')
