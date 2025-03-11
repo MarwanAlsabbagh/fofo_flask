@@ -16,9 +16,30 @@ warnings.filterwarnings(
 # Set Transformers logging level
 logging.set_verbosity_error()
 
-tokenizer = AutoTokenizer.from_pretrained("lataon/xlm-roberta-base-finetuned-legal-domain")
-model = AutoModelForQuestionAnswering.from_pretrained("lataon/xlm-roberta-base-finetuned-legal-domain")
 
+model_path = "./fine-tuned-xlm-roberta-law-model"
+
+try:
+    tokenizer = AutoTokenizer.from_pretrained(
+        "lataon/xlm-roberta-base-finetuned-legal-domain",
+        local_files_only=True,
+        use_fast=True
+    )
+    
+    model = AutoModelForQuestionAnswering.from_pretrained(
+        "lataon/xlm-roberta-base-finetuned-legal-domain",
+        local_files_only=True
+    )
+    
+    # Verify embedding alignment
+    if model.config.vocab_size != len(tokenizer):
+        print("Resizing embeddings to match tokenizer...")
+        model.resize_token_embeddings(len(tokenizer))
+    
+except Exception as e:
+    print(f"Initialization error: {str(e)}")
+    exit(1)
+    
 app = Flask(__name__)
 
 @app.route('/chatbot1')
