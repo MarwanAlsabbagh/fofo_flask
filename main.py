@@ -20,13 +20,12 @@ def chatbot1():
         # context =  request.args["context"]
     
         # 2. Define input properly
-        arabic_context = """
-        المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، 
-        الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار.
-        """
-
+        context = request.args["context"].replace("%20"," ")
+        
+        # المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار
+        
         API_URL = "https://router.huggingface.co/hf-inference/v1"
-        headers = {"Authorization": "Bearer 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"}
+        headers = {"Authorization": "Bearer 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"}
         
         def query(payload):
         	response = requests.post(API_URL, headers=headers, json=payload)
@@ -34,14 +33,13 @@ def chatbot1():
         	
         output = query({
         	"inputs": {
-        	"question": "What is my name?",
-        	"context": "My name is Clara and I live in Berkeley."
+        	"question": question,
+        	"context": context
         },
         })
         print(output)
         return jsonify({"reply": output})
     except Exception as e:
-        print(e)
         return jsonify({"reply": "error"})
 
 @app.route('/chatbot2')
