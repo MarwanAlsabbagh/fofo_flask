@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, request, Response
 import os
 import requests
-# from transformers import AutoTokenizer, AutoModelForQuestionAnswering
-from transformers import pipeline
 import torch
 import warnings
 from transformers.utils import logging
@@ -11,7 +9,6 @@ warnings.filterwarnings(
     message="torch.utils._pytree._register_pytree_node is deprecated"
 )
 logging.set_verbosity_error()
-
 
 
 app = Flask(__name__)
@@ -43,7 +40,7 @@ def chatbot1():
         })
         print(output)
         return jsonify({"reply": output})
-    except(exception e):
+    except Exception as e:
         print(e)
         return jsonify({"reply": "error})
 
