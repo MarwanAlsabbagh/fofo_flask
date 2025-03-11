@@ -24,8 +24,8 @@ def chatbot1():
         
         # المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار
         
-        API_URL = "https://router.huggingface.co/hf-inference/v1"
-        headers = {"Authorization": "Bearer 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"}
+        API_URL = "https://api-inference.huggingface.co/models/deepset/xlm-roberta-large-squad2"
+        headers = {"Authorization": "Bearer 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"}
         
         def query(payload):
         	response = requests.post(API_URL, headers=headers, json=payload)
@@ -35,7 +35,7 @@ def chatbot1():
         	"inputs": {
         	"question": question,
         	"context": context
-        },
+            }
         })
         print(output)
         return jsonify({"reply": output})
