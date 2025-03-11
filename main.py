@@ -5,6 +5,16 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import torch
 import warnings
 # Correct local path format
+from transformers.utils import logging
+
+# Suppress PyTorch deprecation warnings
+warnings.filterwarnings(
+    "ignore", 
+    message="torch.utils._pytree._register_pytree_node is deprecated"
+)
+
+# Set Transformers logging level
+logging.set_verbosity_error()
 
 tokenizer = AutoTokenizer.from_pretrained("lataon/xlm-roberta-base-finetuned-legal-domain")
 model = AutoModelForQuestionAnswering.from_pretrained("lataon/xlm-roberta-base-finetuned-legal-domain")
