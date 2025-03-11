@@ -21,13 +21,14 @@ def chatbot1():
     try:
         pipe = pipeline(
             "question-answering",
-            model="deepset/xlm-roberta-large-squad2",
-            tokenizer="deepset/xlm-roberta-large-squad2",
+            model="deepset/xlm-roberta-base-squad2",
+            tokenizer="deepset/xlm-roberta-base-squad2",
             use_auth_token="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",
             device_map="auto",
             max_memory={0: "0.4GB"}
         )
-        question = request.args["question"]
+        
+        question = request.args["question"].replace("%20"," ")
         # context =  request.args["context"]
     
         # 2. Define input properly
