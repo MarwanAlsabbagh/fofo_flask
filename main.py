@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, Response
 import os
 import requests as req
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering
+# from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import torch
 import warnings
 # Correct local path format
@@ -17,29 +17,13 @@ warnings.filterwarnings(
 logging.set_verbosity_error()
 
 
-model_path = "./fine-tuned-xlm-roberta-law-model"
+from transformers import pipeline
+pipe = pipeline(
+    "question-answering",
+    model="./fine-tuned-xlm-roberta-law-model",
+    tokenizer="./fine-tuned-xlm-roberta-law-model"
+)
 
-try:
-    tokenizer = AutoTokenizer.from_pretrained(
-        "lataon/xlm-roberta-base-finetuned-legal-domain",
-        local_files_only=True,
-        use_fast=True
-    )
-    
-    model = AutoModelForQuestionAnswering.from_pretrained(
-        "lataon/xlm-roberta-base-finetuned-legal-domain",
-        local_files_only=True
-    )
-    
-    # Verify embedding alignment
-    if model.config.vocab_size != len(tokenizer):
-        print("Resizing embeddings to match tokenizer...")
-        model.resize_token_embeddings(len(tokenizer))
-    
-except Exception as e:
-    print(f"Initialization error: {str(e)}")
-    exit(1)
-    
 app = Flask(__name__)
 
 @app.route('/chatbot1')
@@ -58,24 +42,25 @@ def chatbot1():
         return_tensors="pt",
     )
 
-    # Get model predictions
-    with torch.no_grad():
-        outputs = model(**inputs)
-        start_logits = outputs.start_logits
-        end_logits = outputs.end_logits
+   arabic_context = """
+    المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، 
+    الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار.
+    """
+    
+    arabic_question = "ماذا تنص المادة 12 من الدستور المصري عن التعليم؟"
+    
+    # 3. Get answer
+    result = pipe(
+        question=arabic_question,
+        context=arabic_context,
+        max_answer_len=100,
+        handle_impossible_answer=False
+    )
+    
+    print(f"الإجابة: {result['answer']}")
+    print(f"الثقة: {result['score']:.2f}")
 
-    # Find the start and end positions of the answer
-    start_index = torch.argmax(start_logits)
-    end_index = torch.argmax(end_logits)
-
-    # Ensure the end index is greater than or equal to the start index
-    if end_index < start_index:
-        end_index = start_index
-
-    # Decode the answer
-    answer = tokenizer.decode(inputs["input_ids"][0][start_index:end_index + 1], skip_special_tokens=True)
-
-    return jsonify({"reply": answer})
+    return jsonify({"reply": result['answer']})
 
 @app.route('/chatbot2')
 def chatbot2():
