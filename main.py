@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, Response
 import os
-import requests as req
+import requests
 # from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 from transformers import pipeline
 import torch
@@ -19,15 +19,6 @@ app = Flask(__name__)
 @app.route('/chatbot1')
 def chatbot1():
     try:
-        pipe = pipeline(
-            "question-answering",
-            model="deepset/xlm-roberta-base-squad2",
-            tokenizer="deepset/xlm-roberta-base-squad2",
-            use_auth_token="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",
-            device_map="auto",
-            max_memory={0: "0.4GB"}
-        )
-        
         question = request.args["question"].replace("%20"," ")
         # context =  request.args["context"]
     
@@ -36,22 +27,20 @@ def chatbot1():
         المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، 
         الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار.
         """
+
+        API_URL = "https://router.huggingface.co/hf-inference/v1"
+        headers = {"Authorization": "Bearer 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"}
         
-        # arabic_question = "ماذا تنص المادة 12 من الدستور المصري عن التعليم؟"
-        
-        # 3. Get answer
-        result = pipe(
-            question=question,
-            context=arabic_context,
-            max_answer_len=100,
-            handle_impossible_answer=False
-        )
-        
-        print(f"الإجابة: {result['answer']}")
-        print(f"الثقة: {result['score']:.2f}")
-    except Exception as e:
-        print(e)
-        return jsonify({"Exception": "asd"})
+        def query(payload):
+        	response = requests.post(API_URL, headers=headers, json=payload)
+        	return response.json()
+        	
+        output = query({
+        	"inputs": {
+        	"question": "What is my name?",
+        	"context": "My name is Clara and I live in Berkeley."
+        },
+        })
     return jsonify({"reply": result['answer']})
 
 @app.route('/chatbot2')
