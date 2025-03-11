@@ -3,9 +3,11 @@ import os
 import requests as req
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import torch
+# Correct local path format
 
-model = AutoModelForQuestionAnswering.from_pretrained("./fine-tuned-xlm-roberta-law-model")
-tokenizer = AutoTokenizer.from_pretrained("./fine-tuned-xlm-roberta-law-model")
+model = AutoModelForQuestionAnswering.from_pretrained("/app/fine-tuned-xlm-roberta-law-model")
+# For models on HuggingFace Hu
+tokenizer = AutoTokenizer.from_pretrained("/app/fine-tuned-xlm-roberta-law-model")
 
 app = Flask(__name__)
 
