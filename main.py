@@ -2,26 +2,20 @@ from flask import Flask, jsonify, request, Response
 import os
 import requests as req
 # from transformers import AutoTokenizer, AutoModelForQuestionAnswering
+from transformers import pipeline
 import torch
 import warnings
-# Correct local path format
 from transformers.utils import logging
-
-# Suppress PyTorch deprecation warnings
 warnings.filterwarnings(
     "ignore", 
     message="torch.utils._pytree._register_pytree_node is deprecated"
 )
-
-# Set Transformers logging level
 logging.set_verbosity_error()
 
-
-from transformers import pipeline
 pipe = pipeline(
     "question-answering",
-    model="./fine-tuned-xlm-roberta-law-model",
-    tokenizer="./fine-tuned-xlm-roberta-law-model"
+    model="lataon/fine-tuned-xlm-roberta-law-model",
+    tokenizer="lataon/fine-tuned-xlm-roberta-law-model"
 )
 
 app = Flask(__name__)
@@ -29,9 +23,8 @@ app = Flask(__name__)
 @app.route('/chatbot1')
 def chatbot1():
     try:
-        data = request.json
-        question = data["question"]
-        # context = data["context"]
+        question = request.args["question"]
+        # context =  request.args["context"]
     
         # 2. Define input properly
         arabic_context = """
@@ -43,8 +36,8 @@ def chatbot1():
         
         # 3. Get answer
         result = pipe(
-            question=arabic_question,
-            context=question,
+            question=question,
+            context=arabic_context,
             max_answer_len=100,
             handle_impossible_answer=False
         )
