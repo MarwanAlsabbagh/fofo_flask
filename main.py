@@ -1,8 +1,3 @@
-try:
-  !pip -q install google-generativeai --quiet
-except:
-  pass
-
 from flask import Flask, jsonify, request, Response
 import os
 import requests
