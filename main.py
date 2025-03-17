@@ -1,3 +1,21 @@
+import re, requests, html, os
+from bs4 import BeautifulSoup
+from urllib.parse import unquote
+from langchain.schema.runnable import RunnableMap
+
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain.prompts import ChatPromptTemplate
+from langchain.vectorstores import DocArrayInMemorySearch
+from langchain.schema.output_parser import StrOutputParser
+
+from google.colab import userdata
+import google.generativeai as genai
+
+
+
+
+
 from flask import Flask, jsonify, request, Response
 import os
 import requests
