@@ -10,7 +10,7 @@ from langchain.vectorstores import DocArrayInMemorySearch
 from langchain.schema.output_parser import StrOutputParser
 
 from google.colab import userdata
-import google.generativeai as genai
+# import google.generativeai as genai
 
 
 
