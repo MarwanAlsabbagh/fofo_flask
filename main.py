@@ -70,9 +70,10 @@ def down(url):
       print(f"An error occurred: {e}")
 
 # to download the files
-for url in urls[::40]:
+for url in urls:
   if url.find("https://docs") != -1:
     down(url)
+print('All docs installed') 
 
 ##############################################################
 
