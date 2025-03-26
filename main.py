@@ -181,7 +181,7 @@ def chatbot2():
     return jsonify({'question': question, 'answer': answer})
 
 @app.route('/retrival')
-def chatbot2():
+def retrival():
     question = request.args["question"]
     answer=tune_question_answering(question)
     return jsonify({'question': question, 'answer': answer})
