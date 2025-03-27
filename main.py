@@ -47,10 +47,11 @@ def down(url):
                 filename=str(str(filename[0:80])+".txt")
 
             file_path = os.path.join(download_dir, filename)
-            with open(file_path, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=100):#10000
-                    if chunk:
-                        f.write(chunk)
+            if len(response.iter_content(chunk_size=100))<=70:
+                with open(file_path, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=100):#10000
+                        if chunk:
+                            f.write(chunk)
             with open(file_path, 'rb') as tmp_file:
                   raw_content = tmp_file.read()
                   try:
