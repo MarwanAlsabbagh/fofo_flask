@@ -79,7 +79,7 @@ print('All docs installed')
 
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size = 80058,#حجم كل جزء (مقطع) بعد التقسيم بالعدد الإجمالي للأحرف.
-    chunk_overlap  = 6000,#عدد الأحرف المشتركة بين كل جزء والجزء الذي يليه (لضمان عدم فقدان المعلومات عند التجزئة).
+    chunk_overlap  = 5000,#عدد الأحرف المشتركة بين كل جزء والجزء الذي يليه (لضمان عدم فقدان المعلومات عند التجزئة).
     is_separator_regex = True,#يحدد ما إذا كان الفاصل المستخدم لفصل الأجزاء عبارة عن تعبير منتظم (regex) أم مجرد نص عادي (False يعني نص عادي).
     separators=["\ufeff"]
 )
@@ -105,10 +105,10 @@ retriever = BM25Retriever.from_texts(texts=docs,ngram_range=(2, 2),k=3)
 ##############################################################
 genai.configure(api_key='AIzaSyCnaJnmBKGH-KLMzAqSqqTFcUnuQpCNatc')
 models_params = {
-    "temperature": 0.3, # 1
+    "temperature": 0.4, # 1
     "top_p": 0.95,
     # "top_k": 40,
-    "max_output_tokens": 1536
+    "max_output_tokens": 1800
 }
 
 best_model = genai.GenerativeModel(model_name="tunedModels/parliamenttunedmodel4-bkk8kcf0901g",generation_config=models_params)
@@ -183,9 +183,12 @@ def chatbot2():
 
 @app.route('/retrival')
 def retrival():
-    question = request.args["question"]
-    answer=tune_question_answering(question)
-    return jsonify({'question': question, 'answer': answer})
+    try:
+        question = request.args["question"]
+        answer=tune_question_answering(question)
+        return jsonify({'question': question, 'answer': answer})
+    except:
+         return jsonify({'question': question, 'answer': "error server"})
     
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))
