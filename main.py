@@ -46,11 +46,10 @@ def down(url):
                 filename=str(str(filename[0:80])+".txt")
 
             file_path = os.path.join(download_dir, filename)
-            if len(response.iter_content)<=7000:
-                with open(file_path, 'wb') as f:
-                    for chunk in response.iter_content(chunk_size=100):#10000
-                        if chunk:
-                            f.write(chunk)
+            with open(file_path, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=100):#10000
+                    if chunk:
+                        f.write(chunk)
             with open(file_path, 'rb') as tmp_file:
                   raw_content = tmp_file.read()
                   try:
@@ -71,7 +70,7 @@ def down(url):
       print(f"An error occurred: {e}")
 
 # to download the files
-for url in urls:
+for url in urls[::3]:
   if url.find("https://docs") != -1:
     down(url)
 print('All docs installed') 
