@@ -1,5 +1,6 @@
 import re, requests, os, random, time, html
-from langchain.retrievers import BM25Retriever
+# from langchain.retrievers import BM25Retriever
+from langchain_community.retrievers import BM25Retriever
 import google.generativeai as genai
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
@@ -86,7 +87,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 
 final_pages=[]
 for i in pages:
-  if len(i['content'])<=9600:
+  if len(i['content'])<=6500:
     final_pages.append(i)
 
 final_pages[0]['content'].replace('\ufeff', '')
