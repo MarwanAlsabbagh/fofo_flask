@@ -13,7 +13,7 @@ import torch
 import warnings
 from transformers.utils import logging
 
-onnxruntime.set_default_logger_severity(3)  # تعطيل التحذيرات
+# onnxruntime.set_default_logger_severity(3)  # تعطيل التحذيرات
 
 # تهيئة Flask App
 app = Flask(__name__)
@@ -24,6 +24,9 @@ face_app.prepare(ctx_id=0)
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 logging.basicConfig(level=logging.INFO)
 
+# from functools import lru_cache
+
+# @lru_cache(maxsize=100)
 def detect_face(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
