@@ -1,7 +1,7 @@
 import re, requests, os, random, time, html
 # from langchain.retrievers import BM25Retriever
 from langchain_community.retrievers import BM25Retriever
-import google.generativeai as genai
+# import google.generativeai as genai
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -111,9 +111,9 @@ models_params = {
     "max_output_tokens": 1800
 }
 
-best_model = genai.GenerativeModel(model_name="tunedModels/parliamenttunedmodel4-bkk8kcf0901g",generation_config=models_params)
+#  = genai.GenerativeModel(model_name="tunedModels/parliamenttunedmodel4-bkk8kcf0901g",generation_config=models_params)
 
-chat_session = best_model.start_chat(history=[])
+# chat_session = best_model.start_chat(history=[])
 
 def tune_question_answering(user_question):
 
@@ -131,14 +131,15 @@ def tune_question_answering(user_question):
 
   سؤال: {user_question}"""
 
-  answer = chat_session.send_message(template).text
+  # answer = chat_session.send_message(template).text
 
   print('Question:')
   print(user_question)
   print("------------------------------------------------")
   print('answer:')
-  print(answer)
-  return answer
+  # print(answer)
+  # return answer
+  return 'متوقف'
 
 ##############################################################
 
