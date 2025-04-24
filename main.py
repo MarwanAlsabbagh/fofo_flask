@@ -7,7 +7,7 @@ from flask import Flask, jsonify, request, Response
 import cv2
 import numpy as np
 from insightface.app import FaceAnalysis
-from numpy import dot, norm
+from numpy.linalg import norm
 import logging
 import torch
 import warnings
@@ -98,7 +98,7 @@ def verify_faces():
         # استخراج الميزات
         emb1 = face_app.get(photo_img)[0].embedding
         emb2 = face_app.get(stored_img)[0].embedding
-        similarity = dot(emb1, emb2)/(norm(emb1)*norm(emb2))
+        similarity = dot(emb1, emb2)/(np.linalg.norm(emb1)*np.linalg.norm(emb2))
         
         return jsonify({
             "success": True,
