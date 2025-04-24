@@ -103,7 +103,7 @@ print(f"chanks: {len(chunks)}")
 retriever = BM25Retriever.from_texts(texts=docs,ngram_range=(2, 2),k=3)
 
 ##############################################################
-genai.configure(api_key='AIzaSyCnaJnmBKGH-KLMzAqSqqTFcUnuQpCNatc')
+# genai.configure(api_key='AIzaSyCnaJnmBKGH-KLMzAqSqqTFcUnuQpCNatc')
 models_params = {
     "temperature": 0.4, # 1
     "top_p": 0.95,
