@@ -1,6 +1,6 @@
 import re, requests, os, random, time, html
  # from langchain.retrievers import BM25Retriever
- from langchain_community.retrievers import BM25Retriever
+ # from langchain_community.retrievers import BM25Retriever
  # import google.generativeai as genai
  from bs4 import BeautifulSoup
  from urllib.parse import unquote
@@ -99,7 +99,7 @@ import re, requests, os, random, time, html
  
  ##############################################################
  
- retriever = BM25Retriever.from_texts(texts=docs,ngram_range=(2, 2),k=3)
+ # retriever = BM25Retriever.from_texts(texts=docs,ngram_range=(2, 2),k=3)
  
  ##############################################################
  # genai.configure(api_key='AIzaSyCnaJnmBKGH-KLMzAqSqqTFcUnuQpCNatc')
@@ -117,28 +117,28 @@ import re, requests, os, random, time, html
  
  def tune_question_answering(user_question):
  
-   context = [ x.page_content for x in retriever.invoke(user_question)]
-   template = f"""ﺃﻧﺖ ﻣﺴﺘﺸﺎﺭ ﻗﺎﻧﻮﻧﻲ ﺍﻓﺘﺮﺍﺿﻲ. ﺳﺘﺠﻴﺐ ﻋﻠﻰ ﺍﻷﺳﺌﻠﺔ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺑﻨﺎﺀ ﻋﻠﻰ ﺍﻟﻨﺼﻮﺹ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺍﻟﻤﻘﺪﻣﺔ.
+   # context = [ x.page_content for x in retriever.invoke(user_question)]
+   # template = f"""ﺃﻧﺖ ﻣﺴﺘﺸﺎﺭ ﻗﺎﻧﻮﻧﻲ ﺍﻓﺘﺮﺍﺿﻲ. ﺳﺘﺠﻴﺐ ﻋﻠﻰ ﺍﻷﺳﺌﻠﺔ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺑﻨﺎﺀ ﻋﻠﻰ ﺍﻟﻨﺼﻮﺹ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺍﻟﻤﻘﺪﻣﺔ.
  
-     ﺍﻟﻨﺺ ﺍﻟﻘﺎﻧﻮﻧﻲ:
-     {''.join(context)}
-     ﻳﺮﺟﻰ ﻃﺮﺡ ﺍﻷﺳﺌﻠﺔ، ﻭﺳﺘﻘﺪﻡ ﺍﻹﺟﺎﺑﺎﺕ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺍﻟﺪﻗﻴﻘﺔ ﺑﻨﺎﺀ ﻋﻠﻰ ﺍﻟﻨﺼﻮﺹ ﺍﻟﻤﺘﺎﺣﺔ.
-     ﺑﻌﺾ ﺍﻟﻤﻼﺣﻈﺎﺕ ﺍﻟﺬﻱ ﻳﺠﺐ ﺍﺗﺒﺎﻋﻬﺎ
-     1. ﺍﻻﺟﺎﺑﺔ ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﺑﺎﻟﻠﻐﺔ ﺍﻟﻌﺮﺑﻴﺔ
-     2. ﺍﻻﺟﺎﺑﺔ ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﻣﻘﺘﺼﺮﺓ ﻋﻠﻰ ﺍﻟﻨﺺ ﺍﻟﻘﺎﻧﻮﻧﻲ ﺍﻟﻤﻘﺪﻡ ﻓﻘﻂ
-     3. ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﺍﻻﺟﺎﺑﺔ ﺩﻗﻴﻘﺔ ﻭﻣﺤﺎﻳﺪﺓ
-     4. ﻓﻲ ﺣﺎﻝ ﺍﻧﻚ ﻻ ﺗﻌﺮﻑ ﺍﻻﺟﺎﺑﺔ ﻓﻘﻂ ﺍﺟﺐ ﺑﺎﻧﻚ ﻻ ﺗﻌﺮﻑ ﺍﻟﺠﻮﺍﺏ
+   #   ﺍﻟﻨﺺ ﺍﻟﻘﺎﻧﻮﻧﻲ:
+   #   {''.join(context)}
+   #   ﻳﺮﺟﻰ ﻃﺮﺡ ﺍﻷﺳﺌﻠﺔ، ﻭﺳﺘﻘﺪﻡ ﺍﻹﺟﺎﺑﺎﺕ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺍﻟﺪﻗﻴﻘﺔ ﺑﻨﺎﺀ ﻋﻠﻰ ﺍﻟﻨﺼﻮﺹ ﺍﻟﻤﺘﺎﺣﺔ.
+   #   ﺑﻌﺾ ﺍﻟﻤﻼﺣﻈﺎﺕ ﺍﻟﺬﻱ ﻳﺠﺐ ﺍﺗﺒﺎﻋﻬﺎ
+   #   1. ﺍﻻﺟﺎﺑﺔ ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﺑﺎﻟﻠﻐﺔ ﺍﻟﻌﺮﺑﻴﺔ
+   #   2. ﺍﻻﺟﺎﺑﺔ ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﻣﻘﺘﺼﺮﺓ ﻋﻠﻰ ﺍﻟﻨﺺ ﺍﻟﻘﺎﻧﻮﻧﻲ ﺍﻟﻤﻘﺪﻡ ﻓﻘﻂ
+   #   3. ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﺍﻻﺟﺎﺑﺔ ﺩﻗﻴﻘﺔ ﻭﻣﺤﺎﻳﺪﺓ
+   #   4. ﻓﻲ ﺣﺎﻝ ﺍﻧﻚ ﻻ ﺗﻌﺮﻑ ﺍﻻﺟﺎﺑﺔ ﻓﻘﻂ ﺍﺟﺐ ﺑﺎﻧﻚ ﻻ ﺗﻌﺮﻑ ﺍﻟﺠﻮﺍﺏ
  
-   سؤال: {user_question}"""
+   # سؤال: {user_question}"""
  
-   answer = chat_session.send_message(template).text
    # answer = chat_session.send_message(template).text
+   # # answer = chat_session.send_message(template).text
  
-   print('Question:')
-   print(user_question)
-   print("------------------------------------------------")
-   print('answer:')
-   print(answer)
+   # print('Question:')
+   # print(user_question)
+   # print("------------------------------------------------")
+   # print('answer:')
+   # print(answer)
    return answer
    # print(answer)
    # return answer
@@ -178,12 +178,6 @@ import re, requests, os, random, time, html
      except Exception as e:
          print(e)
          return jsonify({"reply": "error"})
- 
- @app.route('/chatbot2')
- def chatbot2():
-     question = request.args["question"]
-     answer="ok"
-     return jsonify({'question': question, 'answer': answer})
  
  @app.route('/retrival')
  def retrival():
