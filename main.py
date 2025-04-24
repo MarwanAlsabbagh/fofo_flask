@@ -13,11 +13,13 @@ import torch
 import warnings
 from transformers.utils import logging
 
+onnxruntime.set_default_logger_severity(3)  # تعطيل التحذيرات
+
 # تهيئة Flask App
 app = Flask(__name__)
 
 # ---------------------- جزء التحقق من الوجوه ----------------------
-face_app = FaceAnalysis(name="buffalo_l")
+face_app = FaceAnalysis(name="buffalo_l", providers=['CPUExecutionProvider'])
 face_app.prepare(ctx_id=0)
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 logging.basicConfig(level=logging.INFO)
