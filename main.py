@@ -1,9 +1,6 @@
  from flask import Flask, jsonify, request, Response
  import os
  import requests as req
- # from transformers import AutoTokenizer, AutoModelForQuestionAnswering
- from transformers import pipeline
- import torch
  import warnings
  from transformers.utils import logging
 
