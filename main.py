@@ -17,12 +17,12 @@ url = "https://groups.google.com/g/syrianlaw/c/Wba7S8LT9MU?pli=1"
 urls =[]
 response = requests.get(url)
 if response.status_code == 200:
-soup = BeautifulSoup(response.content, "html.parser")
-a_tags = soup.find_all("a")
-for tag in a_tags:
-urls.append(tag.get("href"))
+    soup = BeautifulSoup(response.content, "html.parser")
+    a_tags = soup.find_all("a")
+    for tag in a_tags:
+    urls.append(tag.get("href"))
 else:
-print(f"Failed to fetch {url}. Status code: {response.status_code}")
+    print(f"Failed to fetch {url}. Status code: {response.status_code}")
 
 ###################################
 
@@ -30,44 +30,43 @@ download_dir="/content/download_dir_rag"
 os.makedirs(download_dir, exist_ok=True)
 pages = []
 def down(url):
-try:
-response = requests.get(url, stream=True)
-if response.status_code == 200:
-
-content_disposition = response.headers.get('Content-Disposition', '')
-filename = None
-if 'filename=' in content_disposition:
-filename = unquote(content_disposition.split('filename=')[1].split(';')[0].strip('"\''))
-filename = filename.encode('latin-1').decode('utf-8')
-else:
-filename = response.iter_content[0:100]+".txt"
-if filename.find(".pdf") == -1:
-if len(str(filename))>90:
-filename=str(str(filename[0:80])+".txt")
-
-file_path = os.path.join(download_dir, filename)
-with open(file_path, 'wb') as f:
-for chunk in response.iter_content(chunk_size=100):#10000
-if chunk:
-f.write(chunk)
-with open(file_path, 'rb') as tmp_file:
-raw_content = tmp_file.read()
-try:
-content = raw_content.decode('utf-8')
-except UnicodeDecodeError:
-content = raw_content.decode('latin-1', errors='replace')
-content = content.replace("‏","").replace("بشار الأسد","").replace('\n\n', ' ').replace('\r\n', ' ').replace('\u200c', '')
-with open(file_path, 'wb') as tmp_file:
-tmp_file.write(content.encode('utf-8'))
-pages.append({
-'content': content,
-'title': filename,
-})
-# print(f"Successfully downloaded: {filename}")
-else:
-print(f"Failed to download. Status code: {response.status_code}")
-except Exception as e:
-print(f"An error occurred: {e}")
+    try:
+    response = requests.get(url, stream=True)
+    if response.status_code == 200:
+        content_disposition = response.headers.get('Content-Disposition', '')
+        filename = None
+        if 'filename=' in content_disposition:
+            filename = unquote(content_disposition.split('filename=')[1].split(';')[0].strip('"\''))
+            filename = filename.encode('latin-1').decode('utf-8')
+        else:
+            filename = response.iter_content[0:100]+".txt"
+        # if filename.find(".pdf") == -1:
+        if len(str(filename))>90:
+            filename=str(str(filename[0:80])+".txt")
+        
+        file_path = os.path.join(download_dir, filename)
+        with open(file_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=100):#10000
+                if chunk:
+                    f.write(chunk)
+        with open(file_path, 'rb') as tmp_file:
+            raw_content = tmp_file.read()
+            try:
+                content = raw_content.decode('utf-8')
+            except UnicodeDecodeError:
+                content = raw_content.decode('latin-1', errors='replace')
+            content = content.replace("‏","").replace("بشار الأسد","").replace('\n\n', ' ').replace('\r\n', ' ').replace('\u200c', '')
+        with open(file_path, 'wb') as tmp_file:
+            tmp_file.write(content.encode('utf-8'))
+        pages.append({
+        'content': content,
+        'title': filename,
+        })
+        # print(f"Successfully downloaded: {filename}")
+    else:
+        print(f"Failed to download. Status code: {response.status_code}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 # to download the files
 for url in urls[::3]:
@@ -160,26 +159,24 @@ API_URL = "https://api-inference.huggingface.co/models/deepset/xlm-roberta-large
 headers = {"Authorization": "Bearer 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"}
 
 def query(payload):
-response = requests.post(API_URL, headers=headers, json=payload)
-return response.json()
-
-output = query({
-"inputs": {
-"question": question,
-"context": context
-}
-})
-print(output)
-return jsonify({"reply": output})
-except Exception as e:
-print(e)
-return jsonify({"reply": "error"})
+    response = requests.post(API_URL, headers=headers, json=payload)
+    return response.json()
+    
+    output = query({"inputs": {
+    "question": question,
+    "context": context
+    }})
+    print(output)
+    return jsonify({"reply": output})
+    except Exception as e:
+        print(e)
+    return jsonify({"reply": "error"})
 
 @app.route('/chatbot2')
 def chatbot2():
-question = request.args["question"]
-answer="ok"
-return jsonify({'question': question, 'answer': answer})
+    question = request.args["question"]
+    answer="ok"
+    return jsonify({'question': question, 'answer': answer})
 
 @app.route('/retrival')
 def retrival():
@@ -191,4 +188,4 @@ def retrival():
          return jsonify({'question': question, 'answer': "error server"})
 
 if __name__ == '__main__':
-app.run(debug=True, port=os.getenv("PORT", default=5000))
+    app.run(debug=True, port=os.getenv("PORT", default=5000))
