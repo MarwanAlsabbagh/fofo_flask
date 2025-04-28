@@ -156,9 +156,7 @@ def chatbot1():
         
         API_URL = "https://api-inference.huggingface.co/models/deepset/xlm-roberta-large-squad2"
         headers = {"Authorization": "Bearer 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"}
-
-def query(payload):
-    try:
+        
         response = requests.post(API_URL, headers=headers, json=payload)
         return response.json()
         
