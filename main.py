@@ -31,7 +31,7 @@ os.makedirs(download_dir, exist_ok=True)
 pages = []
 def down(url):
     try:
-    response = requests.get(url, stream=True)
+        response = requests.get(url, stream=True)
     if response.status_code == 200:
         content_disposition = response.headers.get('Content-Disposition', '')
         filename = None
@@ -41,7 +41,7 @@ def down(url):
         else:
             filename = response.iter_content[0:100]+".txt"
         # if filename.find(".pdf") == -1:
-        if len(str(filename))>90:
+        if len(str(filename))>90 and filename.find(".pdf") == -1:
             filename=str(str(filename[0:80])+".txt")
         
         file_path = os.path.join(download_dir, filename)
@@ -70,23 +70,23 @@ def down(url):
 
 # to download the files
 for url in urls[::5]:
-if url.find("https://docs") != -1:
-down(url)
+    if url.find("https://docs") != -1:
+        down(url)
 print('All docs installed') 
 
 ##############################################################
 
 text_splitter = RecursiveCharacterTextSplitter(
-chunk_size = 80058,#حجم كل جزء (مقطع) بعد التقسيم بالعدد الإجمالي للأحرف.
+    chunk_size = 80058,#حجم كل جزء (مقطع) بعد التقسيم بالعدد الإجمالي للأحرف.
     chunk_overlap  = 5000,#عدد الأحرف المشتركة بين كل جزء والجزء الذي يليه (لضمان عدم فقدان المعلومات عند التجزئة).
-is_separator_regex = True,#يحدد ما إذا كان الفاصل المستخدم لفصل الأجزاء عبارة عن تعبير منتظم (regex) أم مجرد نص عادي (False يعني نص عادي).
-separators=["\ufeff"]
+    is_separator_regex = True,#يحدد ما إذا كان الفاصل المستخدم لفصل الأجزاء عبارة عن تعبير منتظم (regex) أم مجرد نص عادي (False يعني نص عادي).
+    separators=["\ufeff"]
 )
 
 final_pages=[]
 for i in pages:
-if len(i['content'])<=6500:
-final_pages.append(i)
+    if len(i['content'])<=6500:
+        final_pages.append(i)
 
 final_pages[0]['content'].replace('\ufeff', '')
 all_pages = [elm['content'] for elm in final_pages]
@@ -105,8 +105,8 @@ retriever = BM25Retriever.from_texts(texts=docs,ngram_range=(2, 2),k=3)
 genai.configure(api_key='AIzaSyCnaJnmBKGH-KLMzAqSqqTFcUnuQpCNatc')
 models_params = {
     "temperature": 0.4, # 1
-"top_p": 0.95,
-# "top_k": 40,
+    "top_p": 0.95,
+    # "top_k": 40,
     "max_output_tokens": 1800
 }
 
@@ -116,28 +116,27 @@ chat_session = best_model.start_chat(history=[])
 
 def tune_question_answering(user_question):
 
-context = [ x.page_content for x in retriever.invoke(user_question)]
-template = f"""ﺃﻧﺖ ﻣﺴﺘﺸﺎﺭ ﻗﺎﻧﻮﻧﻲ ﺍﻓﺘﺮﺍﺿﻲ. ﺳﺘﺠﻴﺐ ﻋﻠﻰ ﺍﻷﺳﺌﻠﺔ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺑﻨﺎﺀ ﻋﻠﻰ ﺍﻟﻨﺼﻮﺹ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺍﻟﻤﻘﺪﻣﺔ.
+    context = [ x.page_content for x in retriever.invoke(user_question)]
+    template = f"""ﺃﻧﺖ ﻣﺴﺘﺸﺎﺭ ﻗﺎﻧﻮﻧﻲ ﺍﻓﺘﺮﺍﺿﻲ. ﺳﺘﺠﻴﺐ ﻋﻠﻰ ﺍﻷﺳﺌﻠﺔ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺑﻨﺎﺀ ﻋﻠﻰ ﺍﻟﻨﺼﻮﺹ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺍﻟﻤﻘﺪﻣﺔ.
 
-   ﺍﻟﻨﺺ ﺍﻟﻘﺎﻧﻮﻧﻲ:
-   {''.join(context)}
-   ﻳﺮﺟﻰ ﻃﺮﺡ ﺍﻷﺳﺌﻠﺔ، ﻭﺳﺘﻘﺪﻡ ﺍﻹﺟﺎﺑﺎﺕ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺍﻟﺪﻗﻴﻘﺔ ﺑﻨﺎﺀ ﻋﻠﻰ ﺍﻟﻨﺼﻮﺹ ﺍﻟﻤﺘﺎﺣﺔ.
-   ﺑﻌﺾ ﺍﻟﻤﻼﺣﻈﺎﺕ ﺍﻟﺬﻱ ﻳﺠﺐ ﺍﺗﺒﺎﻋﻬﺎ
-   1. ﺍﻻﺟﺎﺑﺔ ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﺑﺎﻟﻠﻐﺔ ﺍﻟﻌﺮﺑﻴﺔ
-   2. ﺍﻻﺟﺎﺑﺔ ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﻣﻘﺘﺼﺮﺓ ﻋﻠﻰ ﺍﻟﻨﺺ ﺍﻟﻘﺎﻧﻮﻧﻲ ﺍﻟﻤﻘﺪﻡ ﻓﻘﻂ
-   3. ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﺍﻻﺟﺎﺑﺔ ﺩﻗﻴﻘﺔ ﻭﻣﺤﺎﻳﺪﺓ
-   4. ﻓﻲ ﺣﺎﻝ ﺍﻧﻚ ﻻ ﺗﻌﺮﻑ ﺍﻻﺟﺎﺑﺔ ﻓﻘﻂ ﺍﺟﺐ ﺑﺎﻧﻚ ﻻ ﺗﻌﺮﻑ ﺍﻟﺠﻮﺍﺏ
+       ﺍﻟﻨﺺ ﺍﻟﻘﺎﻧﻮﻧﻲ:
+       {''.join(context)}
+       ﻳﺮﺟﻰ ﻃﺮﺡ ﺍﻷﺳﺌﻠﺔ، ﻭﺳﺘﻘﺪﻡ ﺍﻹﺟﺎﺑﺎﺕ ﺍﻟﻘﺎﻧﻮﻧﻴﺔ ﺍﻟﺪﻗﻴﻘﺔ ﺑﻨﺎﺀ ﻋﻠﻰ ﺍﻟﻨﺼﻮﺹ ﺍﻟﻤﺘﺎﺣﺔ.
+       ﺑﻌﺾ ﺍﻟﻤﻼﺣﻈﺎﺕ ﺍﻟﺬﻱ ﻳﺠﺐ ﺍﺗﺒﺎﻋﻬﺎ
+       1. ﺍﻻﺟﺎﺑﺔ ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﺑﺎﻟﻠﻐﺔ ﺍﻟﻌﺮﺑﻴﺔ
+       2. ﺍﻻﺟﺎﺑﺔ ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﻣﻘﺘﺼﺮﺓ ﻋﻠﻰ ﺍﻟﻨﺺ ﺍﻟﻘﺎﻧﻮﻧﻲ ﺍﻟﻤﻘﺪﻡ ﻓﻘﻂ
+       3. ﻳﺠﺐ ﺍﻥ ﺗﻜﻮﻥ ﺍﻻﺟﺎﺑﺔ ﺩﻗﻴﻘﺔ ﻭﻣﺤﺎﻳﺪﺓ
+       4. ﻓﻲ ﺣﺎﻝ ﺍﻧﻚ ﻻ ﺗﻌﺮﻑ ﺍﻻﺟﺎﺑﺔ ﻓﻘﻂ ﺍﺟﺐ ﺑﺎﻧﻚ ﻻ ﺗﻌﺮﻑ ﺍﻟﺠﻮﺍﺏ
+    
+     سؤال: {user_question}"""
+    answer = chat_session.send_message(template).text
 
- سؤال: {user_question}"""
-
-answer = chat_session.send_message(template).text
-
-print('Question:')
-print(user_question)
-print("------------------------------------------------")
-print('answer:')
-print(answer)
-return answer
+    print('Question:')
+    print(user_question)
+    print("------------------------------------------------")
+    print('answer:')
+    print(answer)
+    return answer
 
 ##############################################################
 
@@ -146,25 +145,25 @@ app = Flask(__name__)
 
 @app.route('/chatbot1')
 def chatbot1():
-try:
-question = request.args["question"].replace("%20"," ")
-# context =  request.args["context"]
-
-# 2. Define input properly
-context = request.args["context"].replace("%20"," ")
-
-# المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار
-
-API_URL = "https://api-inference.huggingface.co/models/deepset/xlm-roberta-large-squad2"
-headers = {"Authorization": "Bearer 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"}
+    try:
+        question = request.args["question"].replace("%20"," ")
+        # context =  request.args["context"]
+        
+        # 2. Define input properly
+        context = request.args["context"].replace("%20"," ")
+        
+        # المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار
+        
+        API_URL = "https://api-inference.huggingface.co/models/deepset/xlm-roberta-large-squad2"
+        headers = {"Authorization": "Bearer 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"}
 
 def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)
     return response.json()
     
     output = query({"inputs": {
-    "question": question,
-    "context": context
+        "question": question,
+        "context": context
     }})
     print(output)
     return jsonify({"reply": output})
