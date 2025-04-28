@@ -12,12 +12,7 @@ import requests
 import torch
 import warnings
 from transformers.utils import logging
-
-from arabert.preprocess import ArabertPreprocessor
-from transformers import pipeline
-
-prep = ArabertPreprocessor("aubmindlab/araelectra-base-discriminator") #or empty string it's the same
-qa_pipe =pipeline("question-answering",model="wissamantoun/araelectra-base-artydiqa")
+import requests
 
 
 url = "https://groups.google.com/g/syrianlaw/c/Wba7S8LT9MU?pli=1"
@@ -148,27 +143,41 @@ def tune_question_answering(user_question):
 
 ##############################################################
 
-
+def query(payload):
+    response = requests.post(API_URL, headers=headers, json=payload)
+    return response.json()
+            
 app = Flask(__name__)
 
 @app.route('/chatbot')
-def chatbot1():
+def chatbot():
     try:
         question = request.args["question"].replace("%20"," ")
+
+        token = request.args["question"]
+
+        API_URL = "https://router.huggingface.co/hyperbolic/v1/chat/completions"
         
+        headers = {
+            "Authorization": "Bearer " + token,
+        }
+
         # 2. Define input properly
-        context = request.args["context"].replace("%20"," ")
-        context = prep.preprocess(context)
+        # context = request.args["context"].replace("%20"," ")
         # المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار
+
+        response = query({
+            "messages": [
+                {
+                    "role": "user",
+                    "content": question
+                }
+            ],
+            "max_tokens": 512,
+            "model": "deepseek-ai/DeepSeek-V3-0324"
+        })
         
-        response=qa_pipe(question=text,context=context)
-        return response.json()
-        
-        output = query({"inputs": {
-            "question": question,
-            "context": context
-        }})
-        print(output)
+        output = response["choices"][0]["message"]['content']
         return jsonify({"reply": output})
     except Exception as e:
         print(e)
