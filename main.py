@@ -71,7 +71,7 @@ def down(url):
         print(f"An error occurred: {e}")
 
 # to download the files
-for url in urls[::5]:
+for url in urls[::10]:
     if url.find("https://docs") != -1:
         down(url)
 print('All docs installed') 
@@ -144,7 +144,7 @@ def tune_question_answering(user_question):
 ##############################################################
 
 def query(payload):
-    response = requests.post(API_URL, headers=headers, json=payload)
+    response = requests.post(API_URL, headers, json)
     return response.json()
             
 app = Flask(__name__)
@@ -166,7 +166,7 @@ def chatbot():
         # context = request.args["context"].replace("%20"," ")
         # المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار
 
-        response = query({
+        response = query(API_URL,headers,{
             "messages": [
                 {
                     "role": "user",
