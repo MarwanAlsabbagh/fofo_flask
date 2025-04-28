@@ -152,11 +152,11 @@ def chatbot1():
         
         # 2. Define input properly
         context = request.args["context"].replace("%20"," ")
-        
+        token = request.args["token"].replace("%20"," ")
         # المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار
         
         API_URL = "https://api-inference.huggingface.co/models/deepset/xlm-roberta-large-squad2"
-        headers = {"Authorization": "Bearer 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"}
+        headers = {"Authorization": "Bearer " + str(token)}
         
         response = requests.post(API_URL, headers=headers, json=payload)
         return response.json()
