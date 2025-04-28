@@ -32,39 +32,39 @@ pages = []
 def down(url):
     try:
         response = requests.get(url, stream=True)
-    if response.status_code == 200:
-        content_disposition = response.headers.get('Content-Disposition', '')
-        filename = None
-        if 'filename=' in content_disposition:
-            filename = unquote(content_disposition.split('filename=')[1].split(';')[0].strip('"\''))
-            filename = filename.encode('latin-1').decode('utf-8')
+        if response.status_code == 200:
+            content_disposition = response.headers.get('Content-Disposition', '')
+            filename = None
+            if 'filename=' in content_disposition:
+                filename = unquote(content_disposition.split('filename=')[1].split(';')[0].strip('"\''))
+                filename = filename.encode('latin-1').decode('utf-8')
+            else:
+                filename = response.iter_content[0:100]+".txt"
+            # if filename.find(".pdf") == -1:
+            if len(str(filename))>90 and filename.find(".pdf") == -1:
+                filename=str(str(filename[0:80])+".txt")
+            
+            file_path = os.path.join(download_dir, filename)
+            with open(file_path, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=100):#10000
+                    if chunk:
+                        f.write(chunk)
+            with open(file_path, 'rb') as tmp_file:
+                raw_content = tmp_file.read()
+                try:
+                    content = raw_content.decode('utf-8')
+                except UnicodeDecodeError:
+                    content = raw_content.decode('latin-1', errors='replace')
+                content = content.replace("‏","").replace("بشار الأسد","").replace('\n\n', ' ').replace('\r\n', ' ').replace('\u200c', '')
+            with open(file_path, 'wb') as tmp_file:
+                tmp_file.write(content.encode('utf-8'))
+            pages.append({
+            'content': content,
+            'title': filename,
+            })
+            # print(f"Successfully downloaded: {filename}")
         else:
-            filename = response.iter_content[0:100]+".txt"
-        # if filename.find(".pdf") == -1:
-        if len(str(filename))>90 and filename.find(".pdf") == -1:
-            filename=str(str(filename[0:80])+".txt")
-        
-        file_path = os.path.join(download_dir, filename)
-        with open(file_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=100):#10000
-                if chunk:
-                    f.write(chunk)
-        with open(file_path, 'rb') as tmp_file:
-            raw_content = tmp_file.read()
-            try:
-                content = raw_content.decode('utf-8')
-            except UnicodeDecodeError:
-                content = raw_content.decode('latin-1', errors='replace')
-            content = content.replace("‏","").replace("بشار الأسد","").replace('\n\n', ' ').replace('\r\n', ' ').replace('\u200c', '')
-        with open(file_path, 'wb') as tmp_file:
-            tmp_file.write(content.encode('utf-8'))
-        pages.append({
-        'content': content,
-        'title': filename,
-        })
-        # print(f"Successfully downloaded: {filename}")
-    else:
-        print(f"Failed to download. Status code: {response.status_code}")
+            print(f"Failed to download. Status code: {response.status_code}")
     except Exception as e:
         print(f"An error occurred: {e}")
 
