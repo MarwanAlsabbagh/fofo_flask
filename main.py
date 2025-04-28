@@ -154,7 +154,7 @@ def chatbot():
     try:
         question = request.args["question"].replace("%20"," ")
 
-        token = request.args["question"]
+        token = request.args["token"]
 
         API_URL = "https://router.huggingface.co/hyperbolic/v1/chat/completions"
         
