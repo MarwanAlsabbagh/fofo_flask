@@ -158,15 +158,16 @@ def chatbot1():
         headers = {"Authorization": "Bearer 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"}
 
 def query(payload):
-    response = requests.post(API_URL, headers=headers, json=payload)
-    return response.json()
-    
-    output = query({"inputs": {
-        "question": question,
-        "context": context
-    }})
-    print(output)
-    return jsonify({"reply": output})
+    try:
+        response = requests.post(API_URL, headers=headers, json=payload)
+        return response.json()
+        
+        output = query({"inputs": {
+            "question": question,
+            "context": context
+        }})
+        print(output)
+        return jsonify({"reply": output})
     except Exception as e:
         print(e)
     return jsonify({"reply": "error"})
