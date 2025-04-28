@@ -142,10 +142,6 @@ def tune_question_answering(user_question):
     return answer
 
 ##############################################################
-
-def query(API_URL, headers, json):
-    response = requests.post(API_URL, headers, json)
-    return response.json()
             
 app = Flask(__name__)
 
@@ -161,12 +157,12 @@ def chatbot():
         headers = {
             "Authorization": "Bearer " + token,
         }
-
+        
         # 2. Define input properly
         # context = request.args["context"].replace("%20"," ")
         # المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار
 
-        response = query(API_URL,headers,{
+        response = requests.post(API_URL,headers,{
             "messages": [
                 {
                     "role": "user",
@@ -176,8 +172,9 @@ def chatbot():
             "max_tokens": 512,
             "model": "deepseek-ai/DeepSeek-V3-0324"
         })
-        
-        output = response["choices"][0]["message"]['content']
+        print(response.json())
+        print(response.json()["choices"][0]["message"]['content'])
+        output = response.json()["choices"][0]["message"]['content']
         return jsonify({"reply": output})
     except Exception as e:
         print(e)
