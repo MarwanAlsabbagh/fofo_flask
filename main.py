@@ -20,7 +20,7 @@ if response.status_code == 200:
     soup = BeautifulSoup(response.content, "html.parser")
     a_tags = soup.find_all("a")
     for tag in a_tags:
-    urls.append(tag.get("href"))
+        urls.append(tag.get("href"))
 else:
     print(f"Failed to fetch {url}. Status code: {response.status_code}")
 
@@ -69,7 +69,7 @@ def down(url):
         print(f"An error occurred: {e}")
 
 # to download the files
-for url in urls[::3]:
+for url in urls[::5]:
 if url.find("https://docs") != -1:
 down(url)
 print('All docs installed') 
