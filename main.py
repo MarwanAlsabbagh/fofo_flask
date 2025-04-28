@@ -143,7 +143,7 @@ def tune_question_answering(user_question):
 
 ##############################################################
 
-def query(payload):
+def query(API_URL, headers, json):
     response = requests.post(API_URL, headers, json)
     return response.json()
             
