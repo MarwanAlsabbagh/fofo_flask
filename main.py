@@ -13,6 +13,13 @@ import torch
 import warnings
 from transformers.utils import logging
 
+from arabert.preprocess import ArabertPreprocessor
+from transformers import pipeline
+
+prep = ArabertPreprocessor("aubmindlab/araelectra-base-discriminator") #or empty string it's the same
+qa_pipe =pipeline("question-answering",model="wissamantoun/araelectra-base-artydiqa")
+
+
 url = "https://groups.google.com/g/syrianlaw/c/Wba7S8LT9MU?pli=1"
 urls =[]
 response = requests.get(url)
@@ -144,21 +151,17 @@ def tune_question_answering(user_question):
 
 app = Flask(__name__)
 
-@app.route('/chatbot1')
+@app.route('/chatbot')
 def chatbot1():
     try:
         question = request.args["question"].replace("%20"," ")
-        # context =  request.args["context"]
         
         # 2. Define input properly
         context = request.args["context"].replace("%20"," ")
-        token = request.args["token"].replace("%20"," ")
+        context = prep.preprocess(context)
         # المادة 12 من الدستور المصري تنص على أن التعليم حق لكل مواطن، هدفه بناء الشخصية المصرية، الحفاظ على الهوية الوطنية، وتأكيد قيم المنهج العلمي، وتنمية المواهب، وتشجيع الابتكار
         
-        API_URL = "https://api-inference.huggingface.co/models/deepset/xlm-roberta-large-squad2"
-        headers = {"Authorization": "Bearer " + str(token)}
-        
-        response = requests.post(API_URL, headers=headers, json=payload)
+        response=qa_pipe(question=text,context=context)
         return response.json()
         
         output = query({"inputs": {
@@ -170,12 +173,6 @@ def chatbot1():
     except Exception as e:
         print(e)
     return jsonify({"reply": "error"})
-
-@app.route('/chatbot2')
-def chatbot2():
-    question = request.args["question"]
-    answer="ok"
-    return jsonify({'question': question, 'answer': answer})
 
 @app.route('/retrival')
 def retrival():
