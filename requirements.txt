@@ -21,4 +21,3 @@ langchain_community==0.3.20
 git+https://github.com/aub-mind/arabert.git
 pyarabic
 opencv-python-headless==4.7.0.72
-deepface==0.0.79
