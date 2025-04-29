@@ -11,55 +11,61 @@ import cv2
 import numpy as np
 from numpy.linalg import norm
 from numpy import dot
+from deepface import DeepFace
 
 ##############################################################
             
 app = Flask(__name__)
 
-# تحميل نموذج Haar Cascade
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-def detect_face(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-    return faces
-
-def check_liveness(faces, img_photo, img_stored):
-    if len(faces) != 1:
-        return {"status": "error", "message": "لا توجد وجوه حقيقية أو صورة مزيفة ❌"}
-    else:
-        # (هنا يمكن إضافة المزيد من الفحوص مثل تحليل الحركة أو الوميض)
-        # تحويل الصور إلى numpy arrays
-        img_photo = np.frombuffer(img_photo.read(), np.uint8)
-        img_stored = np.frombuffer(img_stored.read(), np.uint8)
-        
-        img_photo = cv2.imdecode(img_photo, cv2.IMREAD_COLOR)
-        img_stored = cv2.imdecode(img_stored, cv2.IMREAD_COLOR)
-        
-        # استخراج الميزات (يحتاج لتثبيت مكتبة face_recognition أو deepface)
-        # مثال باستخدام DeepFace:
-        from deepface import DeepFace
-        try:
-            result = DeepFace.verify(img_photo, img_stored, model_name='Facenet', detector_backend='opencv')
-            if result['verified']:
-                return {"status": "success", "message": "نفس الشخص ✅"}
-            else:
-                return {"status": "error", "message": "أشخاص مختلفين ❌"}
-        except:
-            return {"status": "error", "message": "لم يتم الكشف عن وجه في واحدة من الصور"}
+def process_image(file):
+    try:
+        file.seek(0)
+        img_bytes = file.read()
+        img_array = np.frombuffer(img_bytes, np.uint8)
+        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+        return img
+    except Exception as e:
+        print(f"Error processing image: {str(e)}")
+        return None
             
 @app.route('/verify', methods=['POST'])
 def verify():
-    if 'photo' not in request.files or 'stored' not in request.files:
-        return jsonify({"error": "الرجاء إرسال صورتين"})
-    
-    photo = request.files['photo']
-    stored = request.files['stored']
-    
-    faces = detect_face(cv2.imdecode(np.frombuffer(photo.read(), np.uint8), cv2.IMREAD_COLOR)
-    result = check_liveness(faces, photo, stored)
-    
-    return jsonify(result)
+    try:
+        if 'photo' not in request.files or 'stored' not in request.files:
+            return jsonify({"status": "error", "message": "الرجاء إرسال صورتين"}), 400
+        
+        photo = request.files['photo']
+        stored = request.files['stored']
+
+        # معالجة الصور
+        img_photo = process_image(photo)
+        img_stored = process_image(stored)
+
+        if img_photo is None or img_stored is None:
+            return jsonify({"status": "error", "message": "صيغة الصورة غير صالحة"}), 400
+
+        # الكشف عن الوجوه
+        gray_photo = cv2.cvtColor(img_photo, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray_photo, scaleFactor=1.1, minNeighbors=5)
+
+        if len(faces) != 1:
+            return jsonify({"status": "error", "message": "يجب أن تحتوي الصورة على وجه واحد فقط"}), 400
+
+        # المقارنة باستخدام DeepFace
+        try:
+            result = DeepFace.verify(img_photo, img_stored, model_name='Facenet', detector_backend='opencv')
+            return jsonify({
+                "status": "success",
+                "verified": result["verified"],
+                "similarity": float(result["distance"])
+            })
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"فشل في المقارنة: {str(e)}"}), 500
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"خطأ غير متوقع: {str(e)}"}), 500
 
 def retrival():
     try:
