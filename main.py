@@ -61,7 +61,6 @@ def verify():
     
     return jsonify(result)
 
-# @app.route('/retrival')
 def retrival():
     try:
         question = request.args["question"]
