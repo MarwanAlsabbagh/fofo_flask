@@ -16,9 +16,9 @@ accelerate==0.30.0
 h5py==3.12.1
 typing-extensions==4.12.2
 wheel==0.45.1
-rank_bm25==0.2.2
 langchain==0.3.21
 langchain_community==0.3.20
-beautifulsoup4==4.13.3
 git+https://github.com/aub-mind/arabert.git
 pyarabic
+opencv-python
+deepface
