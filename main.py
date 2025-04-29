@@ -7,26 +7,32 @@ import torch
 import warnings
 from transformers.utils import logging
 
-import easyocr
-reader = easyocr.Reader(['ar'], gpu=False)  # تأكد أن gpu=True فقط إذا كنت تستخدم GPU
-            
+from PIL import Image
+import pytesseract
 ##############################################################
             
 app = Flask(__name__)
 
-@app.route('/ocr')
+
+@app.route('/ocr', methods=['POST'])
 def ocr():
     if 'image' not in request.files:
         return jsonify({'error': 'لم يتم إرسال صورة'}), 400
 
-    # قراءة الصورة من الطلب
     image_file = request.files['image']
     image_path = 'uploaded_image.png'
     image_file.save(image_path)
 
-    # استخدام EasyOCR لقراءة النصوص
-    results = reader.readtext(image_path)
-    for result in results:
+    try:
+        # تحميل الصورة
+        img = Image.open(image_path)
+
+        # استخراج النص (مع تحديد اللغة العربية)
+        text = pytesseract.image_to_string(img, lang='ara')
+
+        return jsonify({'text': text.strip()})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500:
         print(result[1])
 
 def retrival():
